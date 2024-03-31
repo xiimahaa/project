@@ -1,2 +1,2 @@
 # project
-electropiproject1
+electro pi project1
