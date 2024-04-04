@@ -1,0 +1,103 @@
+# Import libraries
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+import plotly.express as px
+
+# Read the CSV file
+df = pd.read_csv('hotels.csv')
+
+# Display the first few rows of the DataFrame
+df.head()
+
+# Drop the 'neighbourhood_group' column
+df.drop(columns=['neighbourhood_group'], inplace=True)
+
+# Select specific columns
+selected_columns = ['host-id', 'neighbourhood', 'latitude', 'longitude', 'room_type', 'price', 'minimum_nights', 'reviews_per_month', 'number_of_reviews', 'calculated_host_listings_count', 'availability_365', 'number_of_reviews_ltm']
+df = df[selected_columns]
+
+# Display information about the DataFrame
+df.info()
+
+# Descriptive statistics of the DataFrame
+df.describe()
+
+# Check for missing values
+df.isnull().sum()
+
+# Fill null values in columns if the sum of null values is greater than 750 and drop others
+from sklearn.impute import SimpleImputer
+
+columns_to_fill = ['reviews_per_month']
+
+if df[columns_to_fill].isnull().sum().sum() > 750:
+    imputer = SimpleImputer(strategy='mean')
+    df[columns_to_fill] = imputer.fit_transform(df[columns_to_fill])
+    df.dropna(inplace=True)
+else:
+    print("Sum of null values in specified columns is not greater than 750.")
+
+# Check for missing values again
+df.isna().sum()
+
+# Box plot to visualize the distribution of prices
+sns.boxplot(df['price'])
+plt.ylabel('Price')
+plt.title('Distribution of Prices')
+plt.show()
+
+# Set lower and upper limits for price
+lower_limit = 0
+upper_limit = 550
+
+# Apply the limits to the 'price' column
+df.loc[:, 'price'] = df['price'].apply(lambda x: min(max(x, lower_limit), upper_limit))
+
+# Box plot after applying limits
+sns.boxplot(df['price'])
+plt.ylabel('Price')
+plt.title('Distribution of Prices')
+plt.show()
+
+# Scatter plot on Mapbox to visualize the geographic distribution of prices
+fig = px.scatter_mapbox(
+    df,
+    lat='latitude',
+    lon='longitude',
+    width=600,
+    height=600,
+    color='price',
+    hover_data=["price"],
+)
+fig.update_layout(mapbox_style="open-street-map")
+fig.show()
+
+# Bar plot to visualize the distribution of room types
+room_type_counts = df['room_type'].value_counts()
+plt.bar(room_type_counts.index, room_type_counts.values)
+plt.xlabel('Room Type')
+plt.ylabel('Count')
+plt.title('Room Type Distribution')
+plt.show()
+
+# Scatter plot to visualize the relationship between price and room type
+fig = px.scatter(df, x='price', y='room_type', title='Scatter Plot: Price vs. Room Type')
+fig.show()
+
+# Scatter plot to visualize the relationship between price and neighbourhood
+fig = px.scatter(df, x='price', y='neighbourhood', title='Scatter Plot: Price vs. Neighbourhood')
+fig.show()
+
+# Pie chart to visualize the distribution of prices by neighbourhood
+fig = px.pie(df, values='price', names='neighbourhood', title="Distribution of Prices by Neighbourhood")
+fig.show()
+
+# Pie chart to visualize the distribution of prices by room type
+fig = px.pie(df, values='price', names='room_type', title="Distribution of Prices by Room Type")
+fig.show()
+
+# 3D scatter plot to visualize the relationship between price, longitude, and latitude, colored by room type
+fig = px.scatter_3d(df, x='price', y='longitude', z='latitude', color='room_type')
+fig.show()
