@@ -29,9 +29,7 @@ df.isnull().sum()
 
 # Fill null values in columns if the sum of null values is greater than 750 and drop others
 from sklearn.impute import SimpleImputer
-
 columns_to_fill = ['reviews_per_month']
-
 if df[columns_to_fill].isnull().sum().sum() > 750:
     imputer = SimpleImputer(strategy='mean')
     df[columns_to_fill] = imputer.fit_transform(df[columns_to_fill])
@@ -69,8 +67,7 @@ fig = px.scatter_mapbox(
     width=600,
     height=600,
     color='price',
-    hover_data=["price"],
-)
+    hover_data=["price"],)
 fig.update_layout(mapbox_style="open-street-map")
 fig.show()
 
