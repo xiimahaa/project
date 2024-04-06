@@ -83,8 +83,40 @@ plt.show()
 fig = px.scatter(df, x='price', y='room_type', title='Scatter Plot: Price vs. Room Type')
 fig.show()
 
+# Box plot to visualize the distribution of prices
+plt.figure(figsize=(8, 6))
+sns.boxplot(df['price'])
+plt.ylabel('Price')
+plt.title('Distribution of Prices (Outliers Trimmed)')
+plt.show()
+
+# Scatter plot on Mapbox to visualize the geographic distribution of prices
+fig = px.scatter_mapbox(
+    df,
+    lat='latitude',
+    lon='longitude',
+    color='price',
+    hover_data=["price"],
+    title="Geographic Distribution of Prices"
+)
+fig.update_layout(mapbox_style="open-street-map")
+fig.show()
+
+# Bar plot to visualize the distribution of room types
+room_type_counts = df['room_type'].value_counts()
+plt.figure(figsize=(8, 6))
+plt.bar(room_type_counts.index, room_type_counts.values)
+plt.xlabel('Room Type')
+plt.ylabel('Count')
+plt.title('Room Type Distribution')
+plt.show()
+
+# Scatter plot to visualize the relationship between price and room type
+fig = px.scatter(df, x='price', y='room_type', title='Price vs. Room Type')
+fig.show()
+
 # Scatter plot to visualize the relationship between price and neighbourhood
-fig = px.scatter(df, x='price', y='neighbourhood', title='Scatter Plot: Price vs. Neighbourhood')
+fig = px.scatter(df, x='price', y='neighbourhood', title='Price vs. Neighbourhood')
 fig.show()
 
 # Pie chart to visualize the distribution of prices by neighbourhood
